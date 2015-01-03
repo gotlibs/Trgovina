@@ -401,7 +401,7 @@ namespace Trgovina
             //SmtpMail.Send(msg);
 
             System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage(emailPosiljatelja, emailPrejemnika, naslov, vsebina);
-            var smtpClient = new SmtpClient();
+            var smtpClient = new SmtpClient(smtpServer);
             //client.Credentials = CredentialCache.DefaultNetworkCredentials;
             smtpClient.Send(msg);
         }
