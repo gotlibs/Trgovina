@@ -401,8 +401,9 @@ namespace Trgovina
             //SmtpMail.Send(msg);
 
             System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage(emailPosiljatelja, emailPrejemnika, naslov, vsebina);
-            var smtpClient = new SmtpClient(smtpServer);
-            //client.Credentials = CredentialCache.DefaultNetworkCredentials;
+            
+            var smtpClient = new SmtpClient(smtpServer, 587);
+            smtpClient.Credentials = new System.Net.NetworkCredential("b5cb3c04-5ce4-4c4c-88b6-d24a74d4dfa5@apphb.com", "simoncek123");
             smtpClient.Send(msg);
         }
 
