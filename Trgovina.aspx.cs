@@ -391,17 +391,19 @@ namespace Trgovina
 
         public void PosljiEmail(string emailPrejemnika, string emailPosiljatelja, string naslov, string vsebina, string smtpServer)
         {
-            System.Web.Mail.MailMessage msg = new System.Web.Mail.MailMessage();
-            msg.To = emailPrejemnika;
-            msg.From = emailPosiljatelja;
-            msg.Subject = naslov;
-            msg.Body = vsebina;
-            msg.BodyFormat = MailFormat.Html;
-            SmtpMail.SmtpServer = smtpServer;
-            SmtpMail.Send(msg);
-            //SmtpClient client = new SmtpClient(smtpServer);
+            //System.Web.Mail.MailMessage msg = new System.Web.Mail.MailMessage();
+            //msg.To = emailPrejemnika;
+            //msg.From = emailPosiljatelja;
+            //msg.Subject = naslov;
+            //msg.Body = vsebina;
+            //msg.BodyFormat = MailFormat.Html;
+            //SmtpMail.SmtpServer = smtpServer;
+            //SmtpMail.Send(msg);
+
+            System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage(emailPosiljatelja, emailPrejemnika, naslov, vsebina);
+            var smtpClient = new SmtpClient();
             //client.Credentials = CredentialCache.DefaultNetworkCredentials;
-            //client.Send(emailPosiljatelja, emailPrejemnika, naslov, vsebina);
+            smtpClient.Send(msg);
         }
 
         private string VsebinaZaIzpis(List<Izdelek> izbraniIzdelki)
