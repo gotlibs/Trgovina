@@ -85,5 +85,19 @@ namespace Trgovina
             public static int AnitaFranko { get { return 1; } }
             public static int SimonGotlib { get { return 2; } }
         }
+
+        #region KategorijaOstaliIzdelki
+        public enum KategorijaOstaliIzdelki
+        {
+            OstaliIzdelki = -100
+        }
+        #endregion
+
+        #region IzdelekOstaliIzdelki
+        public enum IzdelekOstaliIzdelki
+        {
+            OstaliIzdelki = -100
+        }
+        #endregion
     }
 }

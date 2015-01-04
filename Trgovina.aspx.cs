@@ -104,7 +104,7 @@ namespace Trgovina
         public void FillData()
         {
             List<Kategorija> listKategorije = Kategorije.VrniKategorije()
-                                                        .Where(k => k.KATEGORIJA_ID != -100)
+                                                        .Where(k => k.KATEGORIJA_ID != Convert.ToInt32(Enums.KategorijaOstaliIzdelki.OstaliIzdelki))
                                                         .ToList();
 
             rpKategorije.DataSource = listKategorije;
@@ -448,7 +448,7 @@ namespace Trgovina
         private void VrniIzdelkeString(List<Izdelek> izbraniIzdelki, ref string textToPrint)
         {
             var kategorije = Kategorije.VrniKategorije()
-                                       .Where(k => k.KATEGORIJA_ID != -100)
+                                       .Where(k => k.KATEGORIJA_ID != Convert.ToInt32(Enums.KategorijaOstaliIzdelki.OstaliIzdelki))
                                        .OrderBy(k => k.ZAP_ST_IZPIS);
 
             foreach (Kategorija kategorija in kategorije)
@@ -473,7 +473,7 @@ namespace Trgovina
 
         private void VrniOstaleIzdelkeString(List<Izdelek> izbraniIzdelki, ref string textToPrint)
         {
-            Izdelek ostaliIzdelki = izbraniIzdelki.Where(i => i.IZDELEK_ID == -100).FirstOrDefault();
+            Izdelek ostaliIzdelki = izbraniIzdelki.Where(i => i.IZDELEK_ID == Convert.ToInt32(Enums.IzdelekOstaliIzdelki.OstaliIzdelki)).FirstOrDefault();
 
             if (ostaliIzdelki == null)
                 return;
@@ -571,9 +571,9 @@ namespace Trgovina
                 return;
 
             Izdelek izbranIzdelek = new Izdelek();
-            izbranIzdelek.IZDELEK_ID = -100;
+            izbranIzdelek.IZDELEK_ID = Convert.ToInt32(Enums.IzdelekOstaliIzdelki.OstaliIzdelki);
             izbranIzdelek.NAZIV = "Ostalo";
-            izbranIzdelek.KATEGORIJA_ID = -100;
+            izbranIzdelek.KATEGORIJA_ID = Convert.ToInt32(Enums.KategorijaOstaliIzdelki.OstaliIzdelki);
             izbranIzdelek.KATEGORIJA_NAZIV = "Ostalo";
             izbranIzdelek.OPIS = tbOstaliIzdelki.Text;
             izbraniIzdelki.Add(izbranIzdelek);
@@ -631,7 +631,7 @@ namespace Trgovina
 
         private void NastaviOstaleIzdelke(List<Izdelek> izbraniIzdelki)
         {
-            Izdelek ostaliIzdelek = izbraniIzdelki.Where(i => i.IZDELEK_ID == -100).FirstOrDefault();
+            Izdelek ostaliIzdelek = izbraniIzdelki.Where(i => i.IZDELEK_ID == Convert.ToInt32(Enums.IzdelekOstaliIzdelki.OstaliIzdelki)).FirstOrDefault();
 
             if (ostaliIzdelek == null)
                 return;
