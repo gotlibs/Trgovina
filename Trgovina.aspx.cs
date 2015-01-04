@@ -69,6 +69,28 @@ namespace Trgovina
                 return emailPosiljatelja;
             }
         }
+
+        public string EmailUsername
+        {
+            get
+            {
+                string emailUsername = "";
+                if (ConfigurationManager.AppSettings["emailUsername"] != null)
+                    emailUsername = ConfigurationManager.AppSettings["emailUsername"].ToString();
+                return emailUsername;
+            }
+        }
+
+        public string EmailPassword
+        {
+            get
+            {
+                string emailPassword = "";
+                if (ConfigurationManager.AppSettings["emailPassword"] != null)
+                    emailPassword = ConfigurationManager.AppSettings["emailPassword"].ToString();
+                return emailPassword;
+            }
+        }
         #endregion
         #endregion
         //end sorting
@@ -355,6 +377,8 @@ namespace Trgovina
             string emailPosiljatelja = EmailPosiljatelja;
             string smtpServer = SmtpServer;
             string naslov = "Seznam izdelkov za nakup";
+            string emailUsername = EmailUsername;
+            string emailPassword = EmailPassword;
 
             List<Izdelek> izbraniIzdelki = IzbraniIzdelki();
 
@@ -374,7 +398,7 @@ namespace Trgovina
 
                 foreach (string emailPrejemnika in arStringiZaPosiljanje)
                 {
-                    PosljiEmail(emailPrejemnika, emailPosiljatelja, naslov, textToPrint, smtpServer);
+                    PosljiEmail(emailPrejemnika, emailPosiljatelja, naslov, textToPrint, smtpServer, emailUsername, emailPassword);
                 }
 
                 FillOpozorilo("Uspešno poslan seznam izdelkov za nakup na email/e.", 1, ucOpozorilo1);
@@ -389,7 +413,7 @@ namespace Trgovina
         }
 
 
-        public void PosljiEmail(string emailPrejemnika, string emailPosiljatelja, string naslov, string vsebina, string smtpServer)
+        public void PosljiEmail(string emailPrejemnika, string emailPosiljatelja, string naslov, string vsebina, string smtpServer, string emailUsername, string emailPassword)
         {
             //System.Web.Mail.MailMessage msg = new System.Web.Mail.MailMessage();
             //msg.To = emailPrejemnika;
@@ -401,9 +425,9 @@ namespace Trgovina
             //SmtpMail.Send(msg);
 
             System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage(emailPosiljatelja, emailPrejemnika, naslov, vsebina);
-            
+            msg.IsBodyHtml = true;
             var smtpClient = new SmtpClient(smtpServer, 587);
-            smtpClient.Credentials = new System.Net.NetworkCredential("b5cb3c04-5ce4-4c4c-88b6-d24a74d4dfa5@apphb.com", "simoncek123");
+            smtpClient.Credentials = new System.Net.NetworkCredential(emailUsername, emailPassword);
             smtpClient.Send(msg);
         }
 

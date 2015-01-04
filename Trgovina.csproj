@@ -78,7 +78,6 @@
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Styles\dizajn.css" />
-    <Content Include="Test.aspx" />
     <Content Include="Trgovina.aspx" />
     <Content Include="UserControls\ucModalPopUp.ascx" />
     <Content Include="Web.config">
@@ -119,13 +118,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeznamIzdelekDB.cs" />
-    <Compile Include="Test.aspx.cs">
-      <DependentUpon>Test.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Test.aspx.designer.cs">
-      <DependentUpon>Test.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Trgovina.aspx.cs">
       <DependentUpon>Trgovina.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
