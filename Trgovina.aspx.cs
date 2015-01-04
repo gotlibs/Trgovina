@@ -103,7 +103,10 @@ namespace Trgovina
 
         public void FillData()
         {
-            List<Kategorija> listKategorije = Kategorije.VrniKategorije();
+            List<Kategorija> listKategorije = Kategorije.VrniKategorije()
+                                                        .Where(k => k.KATEGORIJA_ID != -100)
+                                                        .ToList();
+
             rpKategorije.DataSource = listKategorije;
             rpKategorije.DataBind();
 
@@ -437,14 +440,16 @@ namespace Trgovina
 
             VrniIzdelkeString(izbraniIzdelki, ref textToPrint);
 
-            VrniOstaleIzdelkeString(ref textToPrint);
+            VrniOstaleIzdelkeString(izbraniIzdelki, ref textToPrint);
 
             return textToPrint;
         }
 
         private void VrniIzdelkeString(List<Izdelek> izbraniIzdelki, ref string textToPrint)
         {
-            var kategorije = Kategorije.VrniKategorije().OrderBy(k => k.ZAP_ST_IZPIS);
+            var kategorije = Kategorije.VrniKategorije()
+                                       .Where(k => k.KATEGORIJA_ID != -100)
+                                       .OrderBy(k => k.ZAP_ST_IZPIS);
 
             foreach (Kategorija kategorija in kategorije)
             {
@@ -466,24 +471,25 @@ namespace Trgovina
             }
         }
 
-        private void VrniOstaleIzdelkeString(ref string textToPrint)
+        private void VrniOstaleIzdelkeString(List<Izdelek> izbraniIzdelki, ref string textToPrint)
         {
-            string ostaliIzdelki = tbOstaliIzdelki.Text;
-            if (!string.IsNullOrEmpty(ostaliIzdelki))
+            Izdelek ostaliIzdelki = izbraniIzdelki.Where(i => i.IZDELEK_ID == -100).FirstOrDefault();
+
+            if (ostaliIzdelki == null)
+                return;
+
+            string[] ostaliIzdelkiArray = ostaliIzdelki.OPIS.Split(new string[] { "\n" }, StringSplitOptions.None);
+
+            textToPrint = String.Format("{0}{1} <br/>", textToPrint, lblOstaliIzdelki.Text);
+
+            foreach (string ostaliIzdelek in ostaliIzdelkiArray)
             {
-                string[] ostaliIzdelkiArray = ostaliIzdelki.Split(new string[] { "\n" }, StringSplitOptions.None);
+                ostaliIzdelek.Replace("\r", "").Replace("\n", "");
 
-                textToPrint = String.Format("{0}{1} <br/>", textToPrint, lblOstaliIzdelki.Text);
+                if (string.IsNullOrEmpty(ostaliIzdelek))
+                    continue;
 
-                foreach (string ostaliIzdelek in ostaliIzdelkiArray)
-                {
-                    ostaliIzdelek.Replace("\r", "").Replace("\n", "");
-
-                    if (string.IsNullOrEmpty(ostaliIzdelek))
-                        continue;
-
-                    textToPrint = String.Format("{0}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{1} <br/>", textToPrint, ostaliIzdelek);
-                }
+                textToPrint = String.Format("{0}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{1} <br/>", textToPrint, ostaliIzdelek);
             }
         }
 
@@ -536,10 +542,10 @@ namespace Trgovina
                             izbranIzdelek.IZDELEK_ID = Convert.ToInt32(gvHdfIzdelekId.Value);
                             izbranIzdelek.NAZIV = gvLblNaziv.Text;
 
-                            if(kategorijaId.HasValue)
+                            if (kategorijaId.HasValue)
                                 izbranIzdelek.KATEGORIJA_ID = kategorijaId.Value;
 
-                            if(!string.IsNullOrEmpty(kategorijaNaziv))
+                            if (!string.IsNullOrEmpty(kategorijaNaziv))
                                 izbranIzdelek.KATEGORIJA_NAZIV = kategorijaNaziv;
 
                             if (!string.IsNullOrEmpty(gvTbOpis.Text))
@@ -554,7 +560,23 @@ namespace Trgovina
                 }
             }
 
+            OstaliIzdelki(ref izbraniIzdelki);
+
             return izbraniIzdelki;
+        }
+
+        private void OstaliIzdelki(ref List<Izdelek> izbraniIzdelki)
+        {
+            if (string.IsNullOrEmpty(tbOstaliIzdelki.Text.Trim()))
+                return;
+
+            Izdelek izbranIzdelek = new Izdelek();
+            izbranIzdelek.IZDELEK_ID = -100;
+            izbranIzdelek.NAZIV = "Ostalo";
+            izbranIzdelek.KATEGORIJA_ID = -100;
+            izbranIzdelek.KATEGORIJA_NAZIV = "Ostalo";
+            izbranIzdelek.OPIS = tbOstaliIzdelki.Text;
+            izbraniIzdelki.Add(izbranIzdelek);
         }
 
         private void NastaviIzbraneIzdelke(List<Izdelek> izbraniIzdelki)
@@ -602,7 +624,19 @@ namespace Trgovina
                 }
             }
 
+            NastaviOstaleIzdelke(izbraniIzdelki);
+
             Session["IzbraniIzdelki"] = null;
+        }
+
+        private void NastaviOstaleIzdelke(List<Izdelek> izbraniIzdelki)
+        {
+            Izdelek ostaliIzdelek = izbraniIzdelki.Where(i => i.IZDELEK_ID == -100).FirstOrDefault();
+
+            if (ostaliIzdelek == null)
+                return;
+
+            tbOstaliIzdelki.Text = ostaliIzdelek.OPIS;
         }
 
         protected void gvCbAllIzdelektGlava_CheckedChanged(object sender, EventArgs e)
@@ -663,6 +697,8 @@ namespace Trgovina
                         PocistiIzbraneIzdelkeHeader(gvGridView.HeaderRow);
 
                         PocistiIzbraneIzdelkeBody(gvGridView);
+
+                        PocistiIzbraneOstaleIzdelke();
                     }
                 }
             }
@@ -695,6 +731,11 @@ namespace Trgovina
             }
         }
 
+        private void PocistiIzbraneOstaleIzdelke()
+        {
+            tbOstaliIzdelki.Text = string.Empty;
+        }
+
         protected void cbIzdelekEmail_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox cbIzdelekEmail = ((CheckBox)sender) as CheckBox;
@@ -717,7 +758,7 @@ namespace Trgovina
                 else
                 {
                     emailiZaPosiljanje = string.Format("{0};{1}", emailiZaPosiljanje, lbIzdelekEmail.Text.Trim());
-                }                
+                }
             }
             else
             {
